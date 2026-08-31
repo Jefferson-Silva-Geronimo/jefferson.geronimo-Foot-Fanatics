@@ -227,6 +227,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
    Quando solicita a operação,
    Então o sistema recusa a operação e apresenta uma mensagem de erro compreensível.
 
+#### Métrica funcional
+
+- **Nome:** Taxa de acesso permitido e acesso recusado corretos
+- **Definição:** Percentual de operações que recebem resposta correta conforme autorização do perfil
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada operação autorizada e não autorizada testada para os três perfis
+- **Método de validação:** Testes de API black-box com casos positivos e negativos
+- **Critério de aprovação:** 100% das operações recebem resposta esperada (permitidas=permitidas, recusadas=recusadas)
+
 ### RF-02: Gestão de salas
 
 - **Descrição:** O sistema deve permitir ao Administrador cadastrar e consultar salas.
@@ -251,6 +261,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
 2. Dado que um Solicitante não possui permissão de gestão,
    Quando tenta cadastrar uma sala,
    Então o sistema recusa a operação.
+
+#### Métrica funcional
+
+- **Nome:** Taxa de salas cadastradas consultáveis
+- **Definição:** Percentual de salas cadastradas que podem ser consultadas corretamente
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada sala cadastrada por Administrador autenticado
+- **Método de validação:** Testes de API de cadastro e consulta com Testcontainers
+- **Critério de aprovação:** 100% das salas cadastradas são consultáveis após cadastro
 
 ### RF-03: Gestão de professores
 
@@ -277,6 +297,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
    Quando tenta cadastrar um professor,
    Então o sistema recusa a operação.
 
+#### Métrica funcional
+
+- **Nome:** Taxa de professores cadastrados consultáveis e alocáveis
+- **Definição:** Percentual de professores cadastrados que podem ser consultados e têm agenda disponível para validação
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada professor cadastrado com agenda sem conflito
+- **Método de validação:** Testes de API de cadastro, consulta e validação de agenda
+- **Critério de aprovação:** 100% dos professores cadastrados são consultáveis e têm agenda validável
+
 ### RF-04: Gestão de materiais
 
 - **Descrição:** O sistema deve permitir ao Administrador cadastrar e consultar materiais.
@@ -301,6 +331,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
 2. Dado que um Solicitante não possui permissão de gestão,
    Quando tenta cadastrar um material,
    Então o sistema recusa a operação.
+
+#### Métrica funcional
+
+- **Nome:** Taxa de materiais cadastrados consultáveis e reserváveis
+- **Definição:** Percentual de materiais cadastrados que podem ser consultados e utilizados em reservas
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada material cadastrado por Administrador autenticado
+- **Método de validação:** Testes de API de cadastro, consulta e uso em reserva
+- **Critério de aprovação:** 100% dos materiais cadastrados são consultáveis e reserváveis
 
 ### RF-05: Gestão de usuários
 
@@ -327,6 +367,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
    Quando tenta gerenciar usuários,
    Então o sistema recusa a operação.
 
+#### Métrica funcional
+
+- **Nome:** Taxa de usuários gerenciados com perfil oficial correto
+- **Definição:** Percentual de usuários associados aos perfis oficiais (Solicitante, Responsável, Administrador)
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada usuário gerenciado por Administrador
+- **Método de validação:** Testes de API de gerenciamento e autorização com autenticação
+- **Critério de aprovação:** 100% dos usuários possuem perfil oficial único; nenhum perfil adicionado fora dos três oficiais
+
 ### RF-06: Gestão de bloqueios
 
 - **Descrição:** O sistema deve permitir ao Administrador gerenciar bloqueios de recursos.
@@ -351,6 +401,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
 2. Dado que um Solicitante tenta gerenciar bloqueios,
    Quando solicita a operação,
    Então o sistema recusa a operação.
+
+#### Métrica funcional
+
+- **Nome:** Taxa de bloqueios aplicados à disponibilidade
+- **Definição:** Percentual de bloqueios registrados que impedem reservas no período correspondente
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada bloqueio criado por Administrador para recurso e período definido
+- **Método de validação:** Testes de integração com Testcontainers: criar bloqueio, tentar reservar no período, verificar recusa
+- **Critério de aprovação:** 100% dos bloqueios impedem reservas; recursos bloqueados não aparecem como disponíveis
 
 ### RF-07: Gestão de manutenção
 
@@ -377,6 +437,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
    Quando envia a solicitação,
    Então o sistema recusa a reserva e informa a indisponibilidade.
 
+#### Métrica funcional
+
+- **Nome:** Taxa de períodos de manutenção aplicados à indisponibilidade
+- **Definição:** Percentual de períodos de manutenção que impedem reservas no intervalo correspondente
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada período de manutenção registrado por Administrador
+- **Método de validação:** Testes de integração com Testcontainers: registrar manutenção, tentar reservar no período, verificar recusa
+- **Critério de aprovação:** 100% dos períodos de manutenção impedem reservas; recursos em manutenção não aparecem como disponíveis
+
 ### RF-08: Consulta de recursos
 
 - **Descrição:** O sistema deve permitir ao Solicitante consultar salas, professores e materiais disponíveis no cadastro.
@@ -402,6 +472,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
    Quando verifica sua disponibilidade,
    Então o sistema informa que o recurso não pode ser reservado no período de manutenção.
 
+#### Métrica funcional
+
+- **Nome:** Taxa de consultas retornando recursos disponíveis corretos
+- **Definição:** Percentual de consultas que retornam somente recursos livres, não bloqueados e fora de manutenção
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada consulta realizada por Solicitante autenticado
+- **Método de validação:** Testes de API com recursos em vários estados (livre, reservado, bloqueado, manutenção)
+- **Critério de aprovação:** 100% das consultas retornam dados corretos; recursos indisponíveis não são listados
+
 ### RF-09: Pesquisa por filtros e disponibilidade
 
 - **Descrição:** O sistema deve permitir pesquisar recursos por tipo, capacidade, localização, competência e disponibilidade.
@@ -426,6 +506,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
 2. Dado que um recurso está reservado, bloqueado, em manutenção ou conflita com a agenda do professor no período,
    Quando o Solicitante pesquisa sua disponibilidade,
    Então o sistema não o apresenta como disponível para reserva naquele período.
+
+#### Métrica funcional
+
+- **Nome:** Taxa de pesquisas retornando recursos aplicando filtros e disponibilidade
+- **Definição:** Percentual de pesquisas que retornam somente recursos compatíveis com filtros e disponíveis no período
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada pesquisa com tipo, capacidade, localização, competência e período
+- **Método de validação:** Testes parametrizados de API com cada filtro e combinações; recursos indisponíveis testados
+- **Critério de aprovação:** 100% das pesquisas retornam resultados corretos conforme filtros; zero recursos falsos positivos
 
 ### RF-10: Criação de reservas
 
@@ -456,6 +546,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
    Quando as solicitações são processadas,
    Então somente uma reserva é aceita.
 
+#### Métrica funcional
+
+- **Nome:** Taxa de reservas criadas sem sobreposição e com única aceita em dupla
+- **Definição:** Percentual de reservas criadas que não conflitam com sala, material, professor e que em cenário concorrente resultam em apenas uma aceita
+- **Valor-alvo:** 100% sem conflito; 1 reserva aceita em dupla simultânea
+- **Unidade:** Percentual (conflitos); quantidade (dupla)
+- **Condição de medição:** Cada criação com período válido, recursos livres e fora de manutenção; duas solicitações simultâneas para mesmo recurso e período
+- **Método de validação:** Testes unitários, parametrizados, integração, API, E2E e concorrência com Testcontainers
+- **Critério de aprovação:** 100% de reservas sem conflito; exatamente 1 reserva aceita em dupla; recurso restrito segue para aprovação
+
 ### RF-11: Alteração de reservas
 
 - **Descrição:** O sistema deve permitir ao Solicitante alterar suas próprias reservas quando a alteração respeitar as regras de período, conflito e manutenção.
@@ -485,6 +585,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
    Quando a alteração é concluída,
    Então o sistema gera registro de auditoria.
 
+#### Métrica funcional
+
+- **Nome:** Taxa de alterações aplicadas corretamente com auditoria
+- **Definição:** Percentual de alterações de reserva que são aceitas sem conflito e geram auditoria quando mérito
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada alteração de reserva própria não iniciada com dados válidos
+- **Método de validação:** Testes de API, autorização, validação e auditoria com Testcontainers
+- **Critério de aprovação:** 100% das alterações permitidas são aplicadas; alterações proibidas são recusadas; mudanças de estado geram auditoria
+
 ### RF-12: Cancelamento de reservas
 
 - **Descrição:** O sistema deve permitir ao Solicitante cancelar suas próprias reservas quando o cancelamento não violar a regra de reserva iniciada.
@@ -510,6 +620,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
    Quando o usuário tenta cancelá-la,
    Então o sistema recusa a operação e informa o motivo.
 
+#### Métrica funcional
+
+- **Nome:** Taxa de cancelamentos aplicados corretamente com transição e auditoria
+- **Definição:** Percentual de cancelamentos de reserva própria não iniciada que são processados e geram transição para CANCELADA com auditoria
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada cancelamento de reserva própria permitido; tentativas de cancelar reserva de terceiro ou iniciada
+- **Método de validação:** Testes de API, autorização, transição de estado e auditoria com Testcontainers
+- **Critério de aprovação:** 100% dos cancelamentos permitidos são processados com estado CANCELADA; cancelamentos proibidos são recusados; auditoria gerada
+
 ### RF-13: Detecção de sobreposição e dupla reserva
 
 - **Descrição:** O sistema deve detectar sobreposição de horários em sala, material e professor e impedir dupla reserva em solicitações simultâneas.
@@ -534,6 +654,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
 2. Dado que duas solicitações simultâneas usam o mesmo recurso e período,
    Quando ambas são processadas,
    Então somente uma resulta em reserva aceita e a outra recebe resultado de conflito.
+
+#### Métrica funcional
+
+- **Nome:** Taxa de detecção de sobreposição e dupla reserva
+- **Definição:** Percentual de conflitos detectados (sobreposição em sala, material, professor e dupla simultânea) que são impedidos
+- **Valor-alvo:** 100% de conflitos recusados; 1 reserva aceita em dupla
+- **Unidade:** Percentual (detecção); quantidade (dupla)
+- **Condição de medição:** Cada tentativa de reserva com sobreposição em sala, material ou professor; duas solicitações simultâneas
+- **Método de validação:** Testes parametrizados com limites de intervalo; teste concorrência com Testcontainers
+- **Critério de aprovação:** 100% dos conflitos detectados são recusados; exatamente 1 reserva aceita em dupla; base de dados consistente
 
 ### RF-14: Aprovação de solicitações especiais
 
@@ -564,6 +694,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
    Quando confirma a decisão,
    Então o sistema altera o estado para `REJEITADA` e registra a mudança.
 
+#### Métrica funcional
+
+- **Nome:** Taxa de aprovações/rejeições processadas corretamente com auditoria
+- **Definição:** Percentual de solicitações especiais que são aprovadas ou rejeitadas por Responsável autorizado com transição de estado e auditoria
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada solicitação especial pendente; aprovações por Responsável autorizado; rejeições
+- **Método de validação:** Testes de autorização, API, integração e auditoria com Testcontainers
+- **Critério de aprovação:** 100% das solicitações são processadas; somente Responsável autorizado aprova; estados APROVADA/REJEITADA gerados; auditoria registrada
+
 ### RF-15: Validação da alocação de docentes
 
 - **Descrição:** O sistema deve permitir ao Responsável validar a alocação de docentes.
@@ -588,6 +728,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
 2. Dado que a alocação conflita com a agenda do professor,
    Quando o Responsável tenta validá-la,
    Então o sistema informa o conflito e não a considera validada.
+
+#### Métrica funcional
+
+- **Nome:** Taxa de alocações de docentes validadas sem conflito
+- **Definição:** Percentual de alocações de docentes que são validadas pelo Responsável sem conflito na agenda
+- **Valor-alvo:** 100% (das permitidas); 0% com conflito aceito
+- **Unidade:** Percentual
+- **Condição de medição:** Cada alocação de docente registrada; agenda do professor consultada
+- **Método de validação:** Testes de autorização, API e integração com agenda docente
+- **Critério de aprovação:** 100% das alocações são validadas; conflito na agenda impede validação; zero conflitos aceitos
 
 ### RF-16: Registro de retirada de materiais
 
@@ -614,6 +764,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
    Quando tenta executar a operação,
    Então o sistema recusa a operação.
 
+#### Métrica funcional
+
+- **Nome:** Taxa de retiradas registradas e acompanháveis
+- **Definição:** Percentual de retiradas de materiais registradas pelo Responsável que são persistidas e recuperáveis
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada material associado a uma reserva registrado para retirada por Responsável
+- **Método de validação:** Testes de integração com Testcontainers (persistência realista) e API de autorização
+- **Critério de aprovação:** 100% das retiradas permitidas são registradas; somente Responsável registra; operações proibidas são recusadas
+
 ### RF-17: Registro de devolução de materiais
 
 - **Descrição:** O sistema deve permitir ao Responsável acompanhar e registrar a devolução de materiais e equipamentos.
@@ -638,6 +798,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
 2. Dado que não existe retirada correspondente,
    Quando o Responsável tenta registrar a devolução,
    Então o sistema recusa a operação e apresenta uma mensagem de erro compreensível.
+
+#### Métrica funcional
+
+- **Nome:** Taxa de devoluções registradas e associadas a retirada
+- **Definição:** Percentual de devoluções de materiais registradas pelo Responsável que são associadas a retirada correspondente
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada retirada registrada; devolução correspondente; tentativa de devolução sem retirada
+- **Método de validação:** Testes de integração com Testcontainers (persistência realista) e API de autorização
+- **Critério de aprovação:** 100% das devoluções são registradas; todas associadas a retirada; devolução sem retirada é recusada
 
 ### RF-18: Gestão dos estados da reserva
 
@@ -664,6 +834,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
    Quando é processada,
    Então o sistema recusa a operação.
 
+#### Métrica funcional
+
+- **Nome:** Taxa de transições de estado seguindo fluxo oficial
+- **Definição:** Percentual de mudanças de estado que seguem o fluxo oficial (SOLICITADA -> APROVADA -> EM_USO -> CONCLUIDA; alternativas REJEITADA, CANCELADA, NAO_COMPARECEU)
+- **Valor-alvo:** 100% correto; 0% transições inválidas aceitas
+- **Unidade:** Percentual
+- **Condição de medição:** Cada mudança de estado; tentativas de estado não oficial; tentativas de apagar reserva iniciada
+- **Método de validação:** Testes de API e E2E dos estados e transições; testes de negação de estado inválido
+- **Critério de aprovação:** 100% das transições válidas são processadas; estados não oficiais são recusados; reserva iniciada não é apagada
+
 ### RF-19: Histórico auditável
 
 - **Descrição:** O sistema deve registrar e permitir consultar o histórico auditável das mudanças de estado das reservas.
@@ -688,6 +868,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
 2. Dado que uma reserva possui mudanças de estado,
    Quando o Administrador consulta seu histórico,
    Então o sistema apresenta os registros auditáveis correspondentes.
+
+#### Métrica funcional
+
+- **Nome:** Taxa de mudanças de estado gerando registros auditáveis
+- **Definição:** Percentual de mudanças de estado que geram registro de auditoria consultável
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada mudança de estado de reserva; consulta de histórico
+- **Método de validação:** Testes de integração com Testcontainers e consulta de histórico após mudanças
+- **Critério de aprovação:** 100% das mudanças geram auditoria; histórico é consultável; dados de auditoria persistíam
 
 ### RF-20: Notificação ou integração externa
 
@@ -714,6 +904,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
    Quando a integração é acionada,
    Então o sistema registra o resultado da falha de forma segura e observável.
 
+#### Métrica funcional
+
+- **Nome:** Taxa de notificações ou chamadas externas produzidas e falhas registradas
+- **Definição:** Percentual de eventos do fluxo que acionam notificação simulada ou integração com API externa com sucesso; falhas registradas de forma segura
+- **Valor-alvo:** 100% de eventos processados; falhas registradas sem expor detalhes internos
+- **Unidade:** Percentual
+- **Condição de medição:** Cada evento do fluxo que utiliza notificação; integração disponível e indisponível
+- **Método de validação:** Testes de integração com WireMock ou notificação simulada
+- **Critério de aprovação:** 100% dos eventos produzem notificação; falhas são registradas; nenhuma exposição de detalhes internos
+
 ### RF-21: Relatórios operacionais
 
 - **Descrição:** O sistema deve disponibilizar relatório de utilização por recurso, carga horária alocada e conflitos evitados.
@@ -739,6 +939,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
    Quando tenta acessá-los,
    Então o sistema recusa a operação.
 
+#### Métrica funcional
+
+- **Nome:** Taxa de relatórios apresentando utilização, carga horária e conflitos evitados
+- **Definição:** Percentual de relatórios consultados que apresentam os três indicadores (utilização por recurso, carga horária alocada, conflitos evitados) com dados consistentes
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada consulta de relatório por Administrador; dados de reservas e conflitos registrados
+- **Método de validação:** Testes de API, integração e E2E com dados controlados
+- **Critério de aprovação:** 100% dos relatórios apresentam os três indicadores; somente Administrador consulta; dados são consistentes
+
 ### RF-22: Interface responsiva e erros compreensíveis
 
 - **Descrição:** O sistema deve apresentar interface responsiva e mensagens de erro compreensíveis nos fluxos públicos do sistema.
@@ -763,6 +973,16 @@ Não há hipóteses de negócio aprovadas além dos fatos acima. Metas de desemp
 2. Dado que ocorre período inválido, conflito, manutenção ou falta de autorização,
    Quando a operação é recusada,
    Então o sistema apresenta mensagem compreensível e não expõe informação sensível.
+
+#### Métrica funcional
+
+- **Nome:** Taxa de fluxos públicos com interface utilizável e erros compreensíveis
+- **Definição:** Percentual de fluxos públicos onde interface é responsiva sem sobreposição e erros informam causa observável
+- **Valor-alvo:** 100%
+- **Unidade:** Percentual
+- **Condição de medição:** Cada fluxo público em viewport suportada; operação válida e inválida (erro)
+- **Método de validação:** Testes E2E em viewports definidos pela equipe; testes de validação de entrada e erros seguros
+- **Critério de aprovação:** 100% dos fluxos são utilizáveis sem sobreposição; erros informam motivo sem expor detalhes internos
 
 ### RF-23: Documentação da API ou dos fluxos públicos
 
