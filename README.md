@@ -1,2 +1,3 @@
-# jefferson.geronimo-Foot-Fanatics
-Projeto em Aula
+# Projeto Organização dos Recursos
+
+Documentação em desenvolvimento..
