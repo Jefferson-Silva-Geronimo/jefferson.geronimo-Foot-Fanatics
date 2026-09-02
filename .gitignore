@@ -1,29 +1,209 @@
-
-
-# Environment & Secrets (AIOX)
+# Ambiente e segredos
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+
 *.key
 *.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
 
-# Dependencies (AIOX)
+application-local.properties
+application-local.yml
+application-local.yaml
+application-secret.properties
+application-secret.yml
+application-secret.yaml
+
+secrets/
+credentials/
+config/local/
+config/secrets/
+
+# Dependências
 node_modules/
-node_modules
 
-# Build & Logs (AIOX)
-dist/
+# Java e build
+target/
 build/
-*.log
-logs/
+out/
+bin/
+*.class
 
-# IDE & OS (AIOX)
+# Maven e Gradle
+.gradle/
+.mvn/timing.properties
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+
+# Logs e arquivos temporários
+logs/
+log/
+tmp/
+temp/
+.cache/
+
+*.log
+*.log.*
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+*.rej
+*.pid
+*.pid.lock
+*.swp
+*.swo
+*~
+
+# Testes e cobertura
+test-results/
+test-output/
+surefire-reports/
+failsafe-reports/
+allure-results/
+allure-report/
+
+jacoco.exec
+*.exec
+jacoco-report/
+coverage/
+coverage-reports/
+
+# Sonar
+.sonar/
+.scannerwork/
+
+# JMeter
+*.jtl
+jmeter-results/
+jmeter-report/
+performance-results/
+
+# Bancos e volumes locais
+*.mv.db
+*.trace.db
+*.h2.db
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+h2-data/
+database-dumps/
+db-dumps/
+docker-data/
+container-data/
+postgres-data/
+mysql-data/
+mariadb-data/
+redis-data/
+
+# Docker local
+docker-compose.override.yml
+docker-compose.override.yaml
+docker-compose.local.yml
+docker-compose.local.yaml
+compose.override.yml
+compose.override.yaml
+testcontainers.properties
+
+# Arquivos gerados pela aplicação
+uploads/
+uploaded-files/
+local-storage/
+generated-files/
+exports/
+downloads/
+
+# Dados e processamento batch
+data/raw/
+data/processed/
+data/interim/
+data/generated/
+datasets/
+checkpoints/
+batch-checkpoints/
+batch-runs/
+job-runs/
+
+# Modelos e artefatos gerados
+models/
+model-artifacts/
+ml-artifacts/
+model-registry/
+feature-store/
+experiments/
+mlruns/
+training-results/
+validation-results/
+predictions/
+
+*.onnx
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.joblib
+*.parquet
+*.feather
+*.arrow
+*.avro
+
+# Documentação gerada
+docs/generated/
+docs/output/
+docs/rendered/
+generated-diagrams/
+mermaid-output/
+
+# IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+
+.vscode/
+*.code-workspace
+
+.project
+.classpath
+.settings/
+.factorypath
+.springBeans
+.sts4-cache/
+
+# Sistema operacional
 .DS_Store
 Thumbs.db
-.idea/
-*.swp
+Desktop.ini
+.directory
+$RECYCLE.BIN/
 
-# AIOX Local (AIOX)
+# AIOX local
 .aiox-core/local/
-.claude/settings.local.json
 .aiox/install-log.txt
+.claude/settings.local.json
+
+# Ferramentas locais de IA
+.opencode/
+.openrouter/
+.ollama/
+.cursor/
+.continue/
+.aider/
+.ai-cache/
+.agent-cache/
+agent-output/
