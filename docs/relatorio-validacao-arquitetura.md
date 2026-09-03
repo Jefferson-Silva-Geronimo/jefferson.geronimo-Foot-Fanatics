@@ -811,3 +811,31 @@ A arquitetura:
 - define experimentos proporcionais para evolução das decisões.
 
 **Conclusão:** o conjunto arquitetural está adequado para deliberação da equipe, planejamento de implementação e execução dos experimentos prioritários. A aprovação operacional definitiva permanece condicionada às decisões de domínio, aos resultados dos experimentos e às evidências reais de qualidade, segurança, desempenho e operação.
+
+## 27. Revisão após a auditoria final
+
+### 27.1 Conclusão anterior preservada
+
+O relatório anterior concluiu que a arquitetura estava adequada para deliberação, mas ainda condicionada a decisões, experimentos e evidências futuras. Essa conclusão histórica não é apagada.
+
+### 27.2 Correção de interpretação
+
+A ausência de implementação, teste executado, build, pipeline, treinamento ou medição não é, isoladamente, uma falha documental nesta atividade, pois o escopo da correção proíbe implementação, testes e execução de comandos. As evidências necessárias, métricas, critérios esperados, experimentos pendentes e condições de revisão já estavam registrados nas seções 20, 31, 36, 37 e 44 deste relatório e foram detalhados nas seções 46 a 50 de `docs/arquitetura.md`.
+
+Permanece pendência legítima quando falta uma decisão humana, uma métrica de negócio ou informação de origem. Esses itens não foram convertidos em fatos.
+
+### 27.3 Correções realizadas
+
+- Reclassificação da ausência de execução como não aplicável ao escopo documental, sem fabricar resultado.
+- Inclusão das invariantes do batch com status parcial e validação pendente.
+- Inclusão dos cenários ATAM-19 a ATAM-27 para reexecução, duplicação/esquema, janela, promoção incompleta, registry, impacto online, uso indevido, custo e dados tardios.
+- Inclusão de justificativa de prioridade na utility tree complementar.
+- Inclusão de táticas de Len Bass como intenção arquitetural, sem tratar ferramenta como tática.
+- Inclusão de matriz suplementar separando evidência planejada de evidência executada.
+- Preservação de alternativas, divergências, suposições e riscos sem aceite.
+
+### 27.4 Conclusão atual
+
+**Resultado documental:** completo quanto ao plano arquitetural, à identificação de lacunas, à avaliação ATAM, ao painel, às táticas e ao plano de rastreabilidade.
+
+**Resultado decisório:** parcial, porque decisões humanas, métricas e experimentos identificados como pendentes permanecem pendentes por determinação dos próprios artefatos. Não há evidência executada registrada, e isso não é apresentado como resultado.

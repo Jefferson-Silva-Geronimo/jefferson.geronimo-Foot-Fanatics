@@ -1606,3 +1606,239 @@ Para aceitar um risco, a equipe deverá registrar:
 O painel considera a arquitetura coerente e suficientemente abrangente para orientar decisões e experimentos. A principal fragilidade não é a ausência de componentes, mas a presença de decisões de negócio ainda não aprovadas, especialmente no ciclo de vida da reserva e em CON-01. A arquitetura deve permanecer evolutiva e proporcional: decisões técnicas serão promovidas de candidatas para aceitas somente após requisito, experimento ou evidência correspondente.
 
 A revisão não aprova automaticamente tecnologias, métricas ou riscos e não declara implementação, teste, build, pipeline, análise estática ou teste de carga como executados.
+
+## 46. Correção documental após auditoria final
+
+Esta seção preserva o histórico da auditoria registrada em `docs/auditoria-final.md` e corrige somente classificações documentais. A atividade é arquitetural e não autoriza implementação, execução de testes ou fabricação de resultados.
+
+### 46.1 Reclassificação de falsos positivos
+
+| Item apontado pela auditoria | Reclassificação | Fundamento existente |
+|---|---|---|
+| Ausência de build, testes, pipeline, batch, treinamento, promoção ou rollback executados | Não é pendência documental de arquitetura | A atividade proíbe execução; as seções 20, 31.2, 36, 37 e 44 registram evidência necessária, experimento pendente, critério esperado e condição de revisão. |
+| Ausência de ADRs em arquivos separados | Não é pendência | Os ADRs estão formalmente registrados nesta arquitetura, seção 37, com identificadores e histórico preservados. |
+| Ausência de decisão humana para lacunas de domínio e CON-01 | Pendência legítima, não corrigível documentalmente | As seções 12, 42 e 45.2 mantêm essas decisões abertas. |
+| Ausência de resultado de métrica ainda não definida | Pendência de decisão/métrica, não falha de evidência | As métricas estão marcadas como `HIPÓTESE PENDENTE` e `validação pendente`. |
+
+### 46.2 Invariantes documentais
+
+As três invariantes são requisitos de controle arquitetural, mas não são declaradas como comprovadas:
+
+1. **Batch e online:** a separação lógica é uma abordagem candidata em J1/ADR-006; a evidência necessária é demonstrar falha do batch sem impacto funcional no núcleo. Status: **PARCIAL, validação pendente**.
+2. **Checkpoint:** ADR-007 e ADR-009 exigem progresso confirmado somente após sucesso; o mecanismo e o ponto de commit permanecem pendentes. Status: **PARCIAL, experimento pendente**.
+3. **Candidato pior:** ADR-011 bloqueia promoção ou integração até finalidade, métricas e gates aprovados; o gate concreto e a referência ainda não existem. Status: **PARCIAL, decisão de negócio pendente**.
+
+### 46.3 Controles batch e status documental
+
+| Controle | Decisão relacionada | Componente | Cenário | Tática candidata | Métrica | Status |
+|---|---|---|---|---|---|---|
+| Dados novos | J2/J3/ADR-007 | Extração incremental/Progresso | ATAM-07, ATAM-19 | Detectar e validar entrada | Hipótese: zero omissões/reclassificações | Pendente |
+| Checkpoint atômico | J4/ADR-007/009 | Progresso | ATAM-08, ATAM-19 | Transação/commit após sucesso | Hipótese: checkpoint não avança em falha | Pendente |
+| Idempotência | ADR-008 | Execução exclusiva/Progresso | ATAM-08, ATAM-19 | Detectar duplicatas; tornar operação repetível | Hipótese: reexecução sem efeitos duplicados | Pendente |
+| Deduplicação | ADR-008 | Extração/Qualidade | ATAM-20 | Validar entrada e rejeitar duplicata | Métrica depende do dataset | Pendente |
+| Lock e concorrência | J5/ADR-008 | Execução exclusiva | ATAM-09 | Arbitrar recurso/execução | Hipótese: uma execução compatível | Pendente |
+| Retry e falhas | J9/ADR-009 | Controle de execução/Observabilidade | ATAM-08, ATAM-13 | Tratamento de exceção e retry limitado | Taxonomia e quantidade pendentes | Pendente |
+| Timeout | J9/ADR-009 | Controle de execução | ATAM-21 | Limitar recurso/execução | Duração máxima pendente | Pendente |
+| Esquema e qualidade | J8/ADR-010 | Qualidade | ATAM-10, ATAM-20 | Validar entrada e rejeitar dados inválidos | Thresholds pendentes | Pendente |
+| Linhagem e reprodução | J6/J16/ADR-010 | Versionamento/Artefatos | ATAM-07, ATAM-10 | Registrar contexto e histórico | Campos e retenção pendentes | Pendente |
+| Modelo ativo e candidato | J7/J8/ADR-011 | Validação/Versionamento/Promoção | ATAM-11, ATAM-22 | Comparar antes de liberar | Métricas dependem da finalidade | Bloqueado |
+| Promoção incompleta | J7/ADR-011 | Promoção/rollback | ATAM-22 | Verificar estado antes de disponibilizar | Critério pendente | Bloqueado |
+| Registry indisponível | J7/ADR-011 | Versionamento/Artefatos | ATAM-23 | Tratar exceção e preservar ativo | Métrica pendente | Bloqueado |
+| Isolamento online | J1/ADR-006 | Núcleo online/Batch | ATAM-24 | Limitar recurso e separar responsabilidades | Impacto online pendente | Pendente |
+| Segurança e LGPD | J2/J6/J16/ADR-013 | Fonte/Artefatos/Observabilidade | ATAM-14, ATAM-25 | Autenticar, autorizar e proteger dados | Inventário e base legal pendentes | Bloqueado |
+| Custo e janela | J1/J9/ADR-014 | Execução/Artefatos/Observabilidade | ATAM-26, ATAM-27 | Gerenciar demanda e limitar consumo | Volume, janela e orçamento pendentes | Pendente |
+
+Nenhuma linha acima representa implementação ou resultado executado. A tabela explicita a intenção arquitetural, a lacuna e a evidência necessária.
+
+## 47. Cenários ATAM complementares
+
+Os cenários abaixo corrigem a ausência de cenários mínimos independentes apontada pela auditoria. Todos derivam de CON-01, J7-J9, ADR-008 a ADR-014 e riscos RA-06 a RA-16. As métricas são hipóteses e têm **validação pendente**.
+
+### ATAM-19: Reexecução do mesmo intervalo
+
+- **Fonte:** operador ou agendador batch.
+- **Estímulo:** o mesmo intervalo é reexecutado após sucesso, falha ou retomada.
+- **Ambiente:** execução diária ou recuperação.
+- **Artefato:** extração, progresso, artefatos e efeitos do treinamento.
+- **Resposta:** a reexecução não duplica efeitos nem avança o checkpoint de forma indevida.
+- **Métrica:** HIPÓTESE PENDENTE: zero efeitos duplicados e checkpoint consistente.
+- **Origem:** CON-01, J4, J9, ADR-007/008/009.
+- **Importância:** alta; deriva da exigência de dados novos e do risco RA-07.
+- **Dificuldade:** alta; depende de semântica incremental e mecanismo ainda não escolhido.
+- **Decisões relacionadas:** J4, J9, ADR-007, ADR-008, ADR-009.
+- **Evidência:** experimento de reexecução; não executado.
+
+### ATAM-20: Dados duplicados ou fora do esquema
+
+- **Fonte:** fonte de dados ou operação de ingestão.
+- **Estímulo:** chegam registros duplicados, inválidos ou incompatíveis com o esquema.
+- **Ambiente:** execução diária.
+- **Artefato:** extração, qualidade, linhagem e checkpoint.
+- **Resposta:** dados inadequados são bloqueados ou encaminhados conforme política aprovada; progresso não avança indevidamente.
+- **Métrica:** HIPÓTESE PENDENTE: zero dados inadequados usados e zero avanço indevido.
+- **Origem:** CON-01, J8, J9, ADR-010, RA-09.
+- **Importância:** alta; protege a confiabilidade do treino.
+- **Dificuldade:** alta; critérios e dataset não estão definidos.
+- **Decisões relacionadas:** J8, J9, ADR-010.
+- **Evidência:** experimento com duplicação e alteração de esquema; não executado.
+
+### ATAM-21: Execução acima do tempo de janela
+
+- **Fonte:** operação batch.
+- **Estímulo:** a execução excede a janela operacional aprovada.
+- **Ambiente:** execução diária com carga aprovada.
+- **Artefato:** agendamento, controle de execução, treinamento e observabilidade.
+- **Resposta:** a condição é detectada, registrada e tratada conforme política aprovada, sem afetar o online.
+- **Métrica:** HIPÓTESE PENDENTE: duração observada versus janela aprovada e impacto no online.
+- **Origem:** RNF-14, CON-01, J9, ADR-012/014, RA-15/16.
+- **Importância:** alta; combina a restrição temporal com custo e operação.
+- **Dificuldade:** alta; não há janela, volume ou meta aprovados.
+- **Decisões relacionadas:** J1, J9, ADR-006, ADR-012, ADR-014.
+- **Evidência:** medição de carga e custo após metas aprovadas; não executada.
+
+### ATAM-22: Promoção incompleta ou candidato pior
+
+- **Fonte:** validação do treinamento ou observabilidade.
+- **Estímulo:** candidato piora a métrica aprovada ou a promoção falha parcialmente.
+- **Ambiente:** antes ou durante a disponibilização, se o consumo for aprovado.
+- **Artefato:** validação, modelo ativo, candidato, versionamento e promoção.
+- **Resposta:** candidato não substitui o modelo ativo; estado de promoção incompleta fica observável e o ativo permanece preservado.
+- **Métrica:** HIPÓTESE PENDENTE: zero candidatos piores promovidos e zero ativo perdido.
+- **Origem:** CON-01, J7/J8, ADR-011, RA-10/11.
+- **Importância:** alta; protege a decisão de não usar candidato sem gate.
+- **Dificuldade:** alta; finalidade, referência e métricas não existem.
+- **Decisões relacionadas:** J7, J8, ADR-011.
+- **Evidência:** experimento com candidato abaixo do gate e falha parcial; bloqueado.
+
+### ATAM-23: Indisponibilidade do registry ou armazenamento de artefatos
+
+- **Fonte:** serviço de artefatos ou registry, caso adotado.
+- **Estímulo:** o armazenamento não responde durante registro, leitura ou restauração.
+- **Ambiente:** validação, promoção ou rollback, se aplicável.
+- **Artefato:** artefatos, modelo ativo, versionamento e observabilidade.
+- **Resposta:** o modelo ativo permanece preservado; promoção/rollback não é confirmado sem registro verificável.
+- **Métrica:** HIPÓTESE PENDENTE: zero perda do ativo e zero promoção sem registro.
+- **Origem:** CON-01, ADR-011/012, RA-11.
+- **Importância:** alta; preserva recuperação e governança.
+- **Dificuldade:** alta; registry e consumo não foram aprovados.
+- **Decisões relacionadas:** J7, J9, ADR-011/012.
+- **Evidência:** teste de indisponibilidade após definição do armazenamento; bloqueado.
+
+### ATAM-24: Impacto do batch no online
+
+- **Fonte:** operação do núcleo online.
+- **Estímulo:** batch executa, falha ou disputa recursos enquanto usuários reservam.
+- **Ambiente:** operação normal e degradação parcial.
+- **Artefato:** núcleo online, persistência, batch e observabilidade.
+- **Resposta:** reservas permanecem disponíveis e consistentes; falha batch é isolada e observável.
+- **Métrica:** HIPÓTESE PENDENTE: disponibilidade e consistência online durante o ciclo batch.
+- **Origem:** CON-01, J1, ADR-006, RA-06/15.
+- **Importância:** alta; protege o fluxo online oficial.
+- **Dificuldade:** alta; separação física e metas de carga estão pendentes.
+- **Decisões relacionadas:** J1, J9, ADR-006/014.
+- **Evidência:** experimento de falha e carga; não executado.
+
+### ATAM-25: Uso indevido de dados
+
+- **Fonte:** usuário, operador, processo ou artefato.
+- **Estímulo:** dados pessoais são usados fora da finalidade aprovada ou por acesso não autorizado.
+- **Ambiente:** extração, treino, logs, auditoria, validação ou armazenamento.
+- **Artefato:** fonte de dados, datasets, checkpoints, logs e artefatos.
+- **Resposta:** uso é bloqueado ou limitado à finalidade aprovada; ocorrência fica rastreável sem exposição desnecessária.
+- **Métrica:** HIPÓTESE PENDENTE: zero usos fora da finalidade aprovada.
+- **Origem:** RNF-06, RNF-15, CON-01, ADR-013, RA-12.
+- **Importância:** alta; privacidade é atributo prioritário.
+- **Dificuldade:** alta; finalidade, base legal e inventário estão ausentes.
+- **Decisões relacionadas:** J2, J6, J16, ADR-013.
+- **Evidência:** inventário e avaliação LGPD; não executado.
+
+### ATAM-26: Custo acima do orçamento ou capacidade aprovada
+
+- **Fonte:** operação ou responsável financeiro.
+- **Estímulo:** computação, armazenamento, retenção ou reexecução excede limite aprovado.
+- **Ambiente:** execução diária e recuperação.
+- **Artefato:** execução, artefatos, observabilidade e retenção.
+- **Resposta:** condição é detectada e a execução é tratada conforme política de custo aprovada, sem descartar dados necessários silenciosamente.
+- **Métrica:** HIPÓTESE PENDENTE: custo observado versus limite aprovado.
+- **Origem:** CON-01, ADR-014, RA-15.
+- **Importância:** média; custo foi priorizado como atributo de apoio.
+- **Dificuldade:** alta; não há orçamento, volume ou unidade definidos.
+- **Decisões relacionadas:** J1, J6, J9, ADR-014.
+- **Evidência:** medição de consumo, armazenamento e retenção; não executada.
+
+### ATAM-27: Dados tardios ou atualização retroativa
+
+- **Fonte:** sistema de origem.
+- **Estímulo:** registro antigo é incluído ou atualizado depois do checkpoint.
+- **Ambiente:** execução incremental diária.
+- **Artefato:** fonte, extração, progresso e linhagem.
+- **Resposta:** registro é classificado conforme a estratégia aprovada, sem omissão silenciosa ou reclassificação indevida.
+- **Métrica:** HIPÓTESE PENDENTE: zero omissões e reclassificações indevidas nos casos aprovados.
+- **Origem:** CON-01, J3/J4, ADR-007, RA-07.
+- **Importância:** alta; é a principal sensibilidade de dados novos.
+- **Dificuldade:** alta; semântica e critério incremental estão pendentes.
+- **Decisões relacionadas:** J3, J4, ADR-007.
+- **Evidência:** experimento com atualização tardia; não executado.
+
+## 48. Utility tree complementar
+
+| Atributo | Refinamento | Cenário | Importância | Dificuldade | Justificativa | Origem | Decisões |
+|---|---|---|---|---|---|---|---|
+| Recuperabilidade | Reexecução idempotente | ATAM-19 | Alta | Alta | Evita duplicação após falha e atende CON-01 | CON-01, RA-07 | ADR-007/008/009 |
+| Qualidade de dados | Duplicação e esquema | ATAM-20 | Alta | Alta | Impede treino com entrada inadequada | CON-01, RA-09 | ADR-010 |
+| Operabilidade | Janela excedida | ATAM-21 | Alta | Alta | Torna custo e duração verificáveis sem inventar meta | RNF-14, RA-15 | ADR-012/014 |
+| Confiabilidade ML | Promoção incompleta | ATAM-22 | Alta | Alta | Preserva o ativo antes de qualquer uso | CON-01, RA-10/11 | ADR-011 |
+| Recuperabilidade ML | Registry indisponível | ATAM-23 | Alta | Alta | Evita promoção ou restauração sem registro | CON-01, RA-11 | ADR-011/012 |
+| Disponibilidade | Isolamento online/batch | ATAM-24 | Alta | Alta | Pressiona diretamente a separação lógica candidata | CON-01, RA-06/15 | ADR-006 |
+| Privacidade | Finalidade de uso | ATAM-25 | Alta | Alta | Exige governança antes de dados reais | RNF-06, RNF-15, RA-12 | ADR-013 |
+| Custo | Limite de consumo | ATAM-26 | Média | Alta | Expõe retenção, reexecução e infraestrutura | CON-01, RA-15 | ADR-014 |
+| Consistência batch | Atualização tardia | ATAM-27 | Alta | Alta | Pressiona a definição de dado novo | CON-01, RA-07 | ADR-007 |
+
+## 49. Táticas de Len Bass associadas às decisões
+
+As táticas abaixo são associações de intenção arquitetural, não evidências e não decisões tecnológicas. Quando a intenção documentada não permite uma associação segura, o campo permanece pendente.
+
+| Decisão | Atributo | Tática de Len Bass | Cenário | Métrica | Evidência necessária | Trade-off | Origem |
+|---|---|---|---|---|---|---|---|
+| ADR-002: concorrência | Consistência | Arbitrar recursos; controlar concorrência | ATAM-01 | 1 aceita; zero inconsistências | Teste concorrente em banco realista | Consistência versus desempenho | RN-04, RNF-09 |
+| ADR-003: autorização contextual | Segurança | Autenticar usuários; autorizar usuários; limitar exposição | ATAM-03 | Zero operações indevidas | Testes positivos/negativos por objeto | Proteção versus esforço de regras | RF-01, RN-06, RNF-15 |
+| ADR-004: estado-auditoria | Integridade/auditabilidade | Coordenar operações; detectar falha | ATAM-04 | Zero estados sem auditoria | Injeção de falha e verificação | Consistência versus simplicidade | RN-09 |
+| ADR-005: revalidação | Consistência | Detectar mudança; validar antes de confirmar | ATAM-02/05 | Zero conflitos aceitos | Alteração entre pesquisa e confirmação | Consistência versus latência | RN-02, RN-03, RN-05 |
+| ADR-006: separação lógica | Disponibilidade | Isolar recursos; limitar impacto de falha | ATAM-24 | Impacto online dentro da meta pendente | Falha batch durante operação online | Isolamento versus coordenação | CON-01 |
+| ADR-007: incrementalidade | Consistência batch | Validar entrada; registrar progresso | ATAM-07/19/27 | Zero omissões/duplicações, hipótese | Experimento com atraso e reexecução | Precisão versus complexidade | CON-01 |
+| ADR-008: jobs/idempotência | Confiabilidade | Arbitrar execução; detectar duplicatas | ATAM-09/19/20 | Uma execução; zero efeitos duplicados, hipótese | Duas ativações e reexecução | Segurança versus infraestrutura | CON-01 |
+| ADR-009: retry/recuperação | Confiabilidade | Tratar exceção; limitar recurso; recuperar estado | ATAM-08/13/21 | Falha classificada e progresso consistente | Falhas transitórias/permanentes | Recuperação versus custo | CON-01 |
+| ADR-010: linhagem/reprodução | Auditabilidade | Registrar histórico; preservar contexto | ATAM-10/25 | Reconstrução da execução, hipótese | Registro de metadados aprovado | Reprodução versus retenção | CON-01 |
+| ADR-011: gates/promoção/rollback | Confiabilidade | Verificar antes de liberar; manter versão estável | ATAM-11/12/22/23 | Zero candidato pior promovido, hipótese | Candidato pior e registry indisponível | Agilidade versus governança | CON-01 |
+| ADR-012: observabilidade | Operabilidade | Detectar condição; registrar estado; gerar alerta | ATAM-06/08/09/21/24 | Execução e falha observáveis, hipótese | Registros correlacionáveis | Diagnóstico versus custo/privacidade | CON-01 |
+| ADR-013: LGPD | Privacidade/segurança | Minimizar dados; autorizar acesso; manter confidencialidade | ATAM-14/25 | Zero uso fora da finalidade, hipótese | Inventário, acesso, retenção e descarte | Proteção versus utilidade | RNF-06, RNF-15, CON-01 |
+| ADR-014: custos | Custo/desempenho | Gerenciar demanda; limitar consumo | ATAM-21/26 | Consumo versus limite aprovado, hipótese | Medição de duração e armazenamento | Simplicidade versus escala | CON-01 |
+
+### 49.1 Táticas pendentes de validação
+
+Permanecem sem associação segura, até esclarecimento da equipe: finalidade e consumidor de CON-01; política de promoção; semântica de dados novos; critério de recurso restrito; transições de estados; e escolha entre simulação ou API em RF-20. Nenhuma ferramenta é tratada como tática.
+
+## 50. Matriz suplementar de rastreabilidade
+
+| Requisito/driver | Decisão/ADR | Componente | Cenário | Tática | Evidência | Situação |
+|---|---|---|---|---|---|---|
+| RN-04/RNF-09 | ADR-002 | Reservas/Persistência | ATAM-01 | Arbitrar recursos | Teste concorrente necessário | Planejada; validação pendente |
+| RN-09 | ADR-004 | Estados/Auditoria | ATAM-04 | Coordenar operações | Injeção de falha necessária | Planejada; validação pendente |
+| CON-01: dados novos | ADR-007 | Extração/Progresso | ATAM-07/19/27 | Validar entrada; registrar progresso | Experimento incremental necessário | Planejada; decisão pendente |
+| CON-01: reexecução | ADR-008 | Execução/Progresso | ATAM-19 | Detectar duplicatas | Reexecução controlada necessária | Planejada; experimento pendente |
+| CON-01: dados inválidos | ADR-010 | Qualidade | ATAM-10/20 | Validar entrada | Casos de esquema e duplicação necessários | Planejada; dataset pendente |
+| CON-01: candidato pior | ADR-011 | Validação/Promoção | ATAM-11/22 | Verificar antes de liberar | Gate aprovado necessário | Planejada; finalidade pendente |
+| CON-01: registry indisponível | ADR-011 | Artefatos | ATAM-23 | Manter versão estável | Falha de armazenamento necessária | Planejada; registry pendente |
+| CON-01: impacto online | ADR-006 | Online/Batch | ATAM-24 | Isolar recursos | Teste de falha/carga necessário | Planejada; metas pendentes |
+| RNF-14 | ADR-014 | Observabilidade/Execução | ATAM-21/26 | Gerenciar demanda | JMeter e medição necessários | Planejada; metas pendentes |
+| RNF-06/RNF-15 | ADR-013 | Dados/Artefatos | ATAM-14/25 | Minimizar e autorizar | Inventário LGPD necessário | Planejada; aprovação pendente |
+
+**Evidências executadas:** nenhuma localizada nos artefatos consultados. **Evidências planejadas:** as linhas acima e a seção 44. Essa distinção é intencional e não constitui falha da atividade documental.
+
+## 51. Histórico da correção e revisão da conclusão
+
+- **Conclusão anterior:** `docs/auditoria-final.md` classificou a entrega como não integralmente satisfatória.
+- **Problema identificado:** a auditoria tratou ausência de execução como pendência, embora o escopo e as regras da correção proíbam implementação, testes e comandos; também apontou corretamente lacunas documentais ainda não cobertas.
+- **Correções realizadas:** reclassificação de falsos positivos; explicitação das três invariantes como parciais; controles batch; cenários ATAM-19 a ATAM-27; utility tree complementar; táticas de Len Bass; matriz suplementar; preservação de alternativas e histórico.
+- **Conclusão atual:** a entrega está **documentalmente completa quanto ao plano arquitetural e à avaliação crítica**, mas permanece **parcial quanto a decisões humanas, métricas ainda não definidas e experimentos futuros**. Portanto, não é permitido afirmar que os quatro prompts estejam integralmente satisfeitos enquanto esses itens forem critérios obrigatórios não decididos.
+- **Fundamento:** seções 46 a 50 desta arquitetura, seções 42 a 44 e 45.2, e a restrição de não inventar decisões, métricas ou evidências.
